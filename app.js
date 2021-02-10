@@ -32,12 +32,16 @@ const users = (prevState = [], action) => {
             const userToUpdate = prevState.filter(user => user.id === userId)[0];
             if (!userToUpdate) return `Invalid User Info, c'mon man!`;
             const filteredWatchingNow = userToUpdate.watchingNow.filter(movie => movie.movieId === movieId)[0];
+            //movie already started before:
             if (filteredWatchingNow) {
                 filteredWatchingNow.playing = !filteredWatchingNow.playing;
-                filteredWatchingNow.dates = [... filteredWatchingNow.dates,`${clickDate}`]
-            }else{
+                filteredWatchingNow.dates = [...filteredWatchingNow.dates, `${clickDate}`]
+                filteredWatchingNow.numberOfPauses = Math.trunc(filteredWatchingNow.dates.length / 2);
+                filteredWatchingNow.watchTime += filteredWatchingNow.dates[filteredWatchingNow.dates.length - 1] - filteredWatchingNow.dates[filteredWatchingNow.dates.length - 2];
+            } else {
+                //handling new movie
                 userToUpdate.watchingNow = [...userToUpdate.watchingNow, {
-                    movieId, playing: true, dates: [`${clickDate}`],
+                    movieId, watchTime:0, playing: true, dates: [`${clickDate}`],
                 }]
             }
             const newState = [...prevState].filter(user => user.id !== userId);
@@ -255,14 +259,7 @@ const app = {
         store.dispatch({ type: 'TOGGLE_PLAY', payload: { movieId, userId, clickDate, } });
 
     },
-    // pause: (movieId, userId, pauseDate = new Date().toLocaleDateString("en-US")) => {
-    //     const targetUser = store.getState().users.filter(user => user.id === userId)[0];
-    //     if (!targetUser) retuen`Invalid User info`;
-    //     const targetMovie = targetUser.playing.filter(movie => movie.movieId === movieId);
-    //     console.log('##target user in pause', targetMovie);
-    //     // if (targetMovie.playing === false) return `Movie is NOT Playing at the moment`;
-    //     store.dispatch({ type: 'PAUSE_MOVIE', payload: { movieId, userId, pauseDate } });
-    // },
+
     //ADMINS:
     addAdmin: (name) => {
         store.dispatch({
