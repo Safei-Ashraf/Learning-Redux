@@ -201,7 +201,7 @@ const app = {
             divider += 10;
         })
         overallScore = score / divider * 100;
-        return `OverAll Rating: ${overallScore.toFixed(2)}%`;
+        return overallScore.toFixed(2);
     },
     addToFav: (userId, movieId) => {
         store.dispatch({ type: 'ADD_FAV', payload: { userId, movieId } })
@@ -287,11 +287,27 @@ const render = () => {
     let content = '';
     app.getMoviesList().forEach((movie) => {
         let rating = app.getMovieOverallScore(movie.id);
-        rating = rating > 0 ? rating : 'N/A';
-        content += `<div>
-          <h2>Title: ${movie.name}</h2>
-          <p>Duration: ${movie.duration} Minutes</p>
-          <p>Rating: ${rating}</p>
+        let ratingDisplay;
+        if(rating === "NaN") {ratingDisplay = 'N/A';}
+        else {
+            rating = rating.slice(0, 2);
+            if (Number(rating) > 100) rating = 100;
+            ratingDisplay = `${rating}%`        }
+        content += `
+        <div class="card">
+            <div class="card-header">
+             <h2>${movie.name}</h2>
+            </div>
+            <div class="card-body">
+                <div>
+                    <img src="/bg.jpg"/>
+                </div>
+                <div class="footer">
+                    <span> 🕒 ${movie.duration} Minutes</span>
+                    <span>⭐ ${ratingDisplay}</span>
+            </div>
+
+            </div>
         </div>`;
         const rootElem = document.querySelector('#root');
         rootElem.innerHTML = content;

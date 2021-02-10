@@ -16,3 +16,59 @@ h1{
     -ms-border-radius: 12px;
     -o-border-radius: 12px;
 }
+#root{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+.card{
+    border: 2px solid white;
+    border-radius: 12px;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -o-border-radius: 12px;
+    background-color: rgb(138, 20, 30);
+    box-shadow: 3px 3px 5px black;
+    max-width: 300px;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    margin-left: 20px;
+    margin-top: 10px;
+    transition: all 0.4s;
+    -webkit-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    -ms-transition: all 0.4s;
+    -o-transition: all 0.4s;
+}
+.card h2{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: wheat;
+    font-size: 3rem;
+    padding: 0;
+    margin:0;
+}
+img{
+    width: 90%;
+   border: 1px solid #ddd;
+   padding: 5px;
+   background-color: #ddd;
+}
+.footer span{
+    display: block;
+}
+.footer{
+    display: flex;
+    justify-content: space-between;
+    background-color: rgb(163, 27, 39);
+    padding:0 10px 0 10px;
+}
+.card:hover{
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+}
