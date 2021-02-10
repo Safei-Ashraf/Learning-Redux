@@ -1,5 +1,11 @@
 #   Learning Notes: 
 
+- In this ReadME, I will be adding some of the notes I have been taking during learning, most of it came from the community notes on egghead course 
+>	https://egghead.io/courses/getting-started-with-redux
+
+and the rest I picked from various sources or by myself.
+
+
 Redux has 3 main principles!
 
 ##    The first principle of Redux:
