@@ -37,7 +37,8 @@ const users = (prevState = [], action) => {
                 filteredWatchingNow.playing = !filteredWatchingNow.playing;
                 filteredWatchingNow.dates = [...filteredWatchingNow.dates, `${clickDate}`]
                 filteredWatchingNow.numberOfPauses = Math.trunc(filteredWatchingNow.dates.length / 2);
-                filteredWatchingNow.watchTime += filteredWatchingNow.dates[filteredWatchingNow.dates.length - 1] - filteredWatchingNow.dates[filteredWatchingNow.dates.length - 2];
+                let watchTime = Number((((filteredWatchingNow.dates[filteredWatchingNow.dates.length - 1] - filteredWatchingNow.dates[filteredWatchingNow.dates.length - 2]) / 1000) / 60).toFixed(2));
+                filteredWatchingNow.watchTime += watchTime
             } else {
                 //handling new movie
                 userToUpdate.watchingNow = [...userToUpdate.watchingNow, {
@@ -253,7 +254,7 @@ const app = {
     getUsers: () => {
         return store.getState().users;
     },
-    togglePlay: (movieId, userId, clickDate = new Date().toLocaleTimeString("en-US")) => {
+    togglePlay: (movieId, userId, clickDate = new Date().getTime()) => {
         const targetUser = store.getState().users.filter(user => user.id === userId)[0];
         if (!targetUser) retuen`Invalid User info`;
         store.dispatch({ type: 'TOGGLE_PLAY', payload: { movieId, userId, clickDate, } });
