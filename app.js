@@ -282,3 +282,20 @@ const app = {
     }
 }
 
+//Rendering:
+const render = () => {
+    let content = '';
+    app.getMoviesList().forEach((movie) => {
+        let rating = app.getMovieOverallScore(movie.id);
+        rating = rating > 0 ? rating : 'N/A';
+        content += `<div>
+          <h2>Title: ${movie.name}</h2>
+          <p>Duration: ${movie.duration} Minutes</p>
+          <p>Rating: ${rating}</p>
+        </div>`;
+        const rootElem = document.querySelector('#root');
+        rootElem.innerHTML = content;
+    });
+    return content;
+};
+store.subscribe(render);
