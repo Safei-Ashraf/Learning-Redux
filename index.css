@@ -91,3 +91,7 @@ button{
     -ms-transition: all 0.4s;
     -o-transition: all 0.4s;
 }
+button:disabled{
+    opacity: 50%;
+    cursor: not-allowed;
+}

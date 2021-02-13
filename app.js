@@ -142,19 +142,25 @@ const movies = (prevState = [], action) => {
             return prevState;
     }
 }
-
-//store:
+// //store:
 const { createStore, combineReducers } = myRedux;
 //Combine it  يا ست الكل
 const rootReducer = combineReducers({ movies, users, admins });
-const store = createStore(rootReducer);
+const undoableApp = undoable(rootReducer);
+const store = createStore(undoableApp);
 
+
+// const undoableRootReducer = undoable(rootReducer)
+// const store = createStore(undoableRootReducer);
+// // const store = createStore(rootReducer);
+// // const store = createStore(undoableRootReducer);
+// // const store = createStore(undoable(rootReducer));
 
 //app:
 const app = {
     //MOVIES:
     addMovie: (name, duration, adminId) => {
-        const _admin = store.getState().admins.filter(admin => admin.id === adminId)[0];
+        const _admin = store.getState().present.admins.filter(admin => admin.id === adminId)[0];
         if (!_admin) return `NOT AUTHORIZED TO PERFORM THIS ACTION (O_o;)`;
         store.dispatch({
             type: 'ADD_MOVIE',
@@ -170,12 +176,12 @@ const app = {
             }
         })
     },
-    getMoviesList: () => store.getState().movies,
+    getMoviesList: () => store.getState().present.movies,
     addMovieDetails: (movieId, cast = []) => {
         store.dispatch({ type: 'ADD_DETAIL', payload: { movieId, cast } });
     },
     deleteMovie: (movieId, adminId) => {
-        const _admin = store.getState().admins.filter(admin => admin.id === adminId)[0];
+        const _admin = store.getState().present.admins.filter(admin => admin.id === adminId)[0];
         if (!_admin) return `NOT AUTHORIZED TO PERFORM THIS ACTION (O_o;)`;
         store.dispatch({ type: 'DELETE_MOVIE', payload: { movieId } })
     },
@@ -184,7 +190,7 @@ const app = {
         store.dispatch({ type: 'RATE_MOVIE', payload: { movieId, userId, score } })
     },
     getMovieRatingList: (movieId) => {
-        const state = store.getState().movies;
+        const state = store.getState().present.movies;
         const list = state.filter(m => m.id === movieId)
         list[0].rating.map(s => {
             console.log(s.userId)
@@ -194,7 +200,7 @@ const app = {
         let score = 0;
         let overallScore = 0;
         let divider = 0;
-        const state = store.getState().movies;
+        const state = store.getState().present.movies;
         const list = state.filter(m => m.id === movieId)
         list[0].rating.map(r => {
             score += r.score;
@@ -210,7 +216,7 @@ const app = {
         store.dispatch({ type: 'ADD_WATCH', payload: { userId, movieId, watchTime, watched: null } })
     },
     getMovieWatchers: (movieId) => {
-        const state = store.getState().movies;
+        const state = store.getState().present.movies;
         const targetMovie = state.find(movie => movie.id === movieId);
         if (targetMovie) {
             return `Watching now : ${targetMovie.watchedBy.map(user => user.userId)}`;
@@ -220,7 +226,7 @@ const app = {
         }
     },
     getUserWatchTime: (userId, movieId) => {
-        const state = store.getState().movies;
+        const state = store.getState().present.movies;
         const targetMovie = state.find(movie => movie.id === movieId);
         let userWatchTime = targetMovie.watchedBy.filter(user => user.userId === userId)[0];
         let displayText = userWatchTime ? userWatchTime.watchTime : 'NOT there, cAuSe yOu eNtEreD wRoNg iNfo, SHAME ON YOU (-_-;)'
@@ -243,7 +249,7 @@ const app = {
         })
     },
     toggleUserLogin: (userName, userId) => {
-        const state = store.getState().users;
+        const state = store.getState().present.users;
         const idChecker = state.filter(user => user.id === userId);
         const nameChecker = state.filter(user => user.name === userName);
         if (idChecker.length < 1) return `Wrong Id Info, Re-Check! Easy to hack us!`;
@@ -252,10 +258,10 @@ const app = {
         return `user toggled succesfuly !✔️`
     },
     getUsers: () => {
-        return store.getState().users;
+        return store.getState().present.users;
     },
     togglePlay: (movieId, userId, clickDate = new Date().getTime()) => {
-        const targetUser = store.getState().users.filter(user => user.id === userId)[0];
+        const targetUser = store.getState().present.users.filter(user => user.id === userId)[0];
         if (!targetUser) retuen`Invalid User info`;
         store.dispatch({ type: 'TOGGLE_PLAY', payload: { movieId, userId, clickDate, } });
 
@@ -272,7 +278,7 @@ const app = {
         })
     },
     toggleAdminLogin: (adminName, adminId) => {
-        const state = store.getState().admins;
+        const state = store.getState().present.admins;
         const idChecker = state.filter(admin => admin.id === adminId);
         const nameChecker = state.filter(admin => admin.name === adminName);
         if (idChecker.length < 1) return `Wrong admin Id Info, Re-Check! Easy to hack us!`;
@@ -288,6 +294,7 @@ const app = {
         store.dispatch({ type: 'REDO' });
     }
 }
+
 
 //Rendering:
 const render = () => {
@@ -326,3 +333,13 @@ store.subscribe(render);
 //Time Travel Button:
 const undoBtn = document.querySelector('#undo');
 const redoBtn = document.querySelector('#redo');
+undoBtn.addEventListener('click', ()=>app.undo())
+redoBtn.addEventListener('click', () => app.redo())
+// if (store.getState().past.length === 0) undoBtn.disabled = true;
+// else {
+//     undoBtn.disabled = false;
+// }
+// if (store.getState().future.length === 0) redo.disabled = true;
+// else {
+//     undoBtn.disabled = false;
+// }
