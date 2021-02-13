@@ -279,6 +279,13 @@ const app = {
         if (nameChecker.length < 1) return `Wrong admin name Info, Re-Check! 0 security`;
         nameChecker[0].isLoggedIn = !nameChecker[0].isLoggedIn;
         return `Admin toggled succesfuly !✔️`
+    },
+    //Time Travel:
+    undo: () => {
+        store.dispatch({ type: 'UNDO' });
+    },
+    redo: () => {
+        store.dispatch({ type: 'REDO' });
     }
 }
 
@@ -315,3 +322,7 @@ const render = () => {
     return content;
 };
 store.subscribe(render);
+
+//Time Travel Button:
+const undoBtn = document.querySelector('#undo');
+const redoBtn = document.querySelector('#redo');

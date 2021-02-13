@@ -72,3 +72,22 @@ img{
     -ms-transform: scale(1.2);
     -o-transform: scale(1.2);
 }
+button{
+    border-radius: 9999px;
+    -webkit-border-radius: 9999px;
+    -moz-border-radius: 9999px;
+    -ms-border-radius: 9999px;
+    -o-border-radius: 9999px;
+    height: 4rem;
+    width: 4rem;
+    color: wheat;
+    background-color: tomato;
+    font-weight: 900;
+    margin-top: 20px;
+    outline: 2px transparent;
+    transition: all 0.4s;
+    -webkit-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    -ms-transition: all 0.4s;
+    -o-transition: all 0.4s;
+}
