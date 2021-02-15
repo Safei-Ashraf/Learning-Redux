@@ -145,9 +145,9 @@ const movies = (prevState = [], action) => {
 // //store:
 const { createStore, combineReducers } = myRedux;
 //Combine it  يا ست الكل
-const rootReducer = combineReducers({ movies, users, admins });
-const undoableApp = undoable(rootReducer);
-const store = createStore(undoableApp);
+const undoableApp = undoable(movies);
+const rootReducer = combineReducers({ undoableApp, users, admins });
+const store = createStore(rootReducer);
 
 
 // const undoableRootReducer = undoable(rootReducer)
@@ -160,7 +160,7 @@ const store = createStore(undoableApp);
 const app = {
     //MOVIES:
     addMovie: (name, duration, adminId) => {
-        const _admin = store.getState().present.admins.filter(admin => admin.id === adminId)[0];
+        const _admin = store.getState().admins.filter(admin => admin.id === adminId)[0];
         if (!_admin) return `NOT AUTHORIZED TO PERFORM THIS ACTION (O_o;)`;
         store.dispatch({
             type: 'ADD_MOVIE',
@@ -176,12 +176,12 @@ const app = {
             }
         })
     },
-    getMoviesList: () => store.getState().present.movies,
+    getMoviesList: () => store.getState().undoableApp.present,
     addMovieDetails: (movieId, cast = []) => {
         store.dispatch({ type: 'ADD_DETAIL', payload: { movieId, cast } });
     },
     deleteMovie: (movieId, adminId) => {
-        const _admin = store.getState().present.admins.filter(admin => admin.id === adminId)[0];
+        const _admin = store.getState().admins.filter(admin => admin.id === adminId)[0];
         if (!_admin) return `NOT AUTHORIZED TO PERFORM THIS ACTION (O_o;)`;
         store.dispatch({ type: 'DELETE_MOVIE', payload: { movieId } })
     },
@@ -190,7 +190,7 @@ const app = {
         store.dispatch({ type: 'RATE_MOVIE', payload: { movieId, userId, score } })
     },
     getMovieRatingList: (movieId) => {
-        const state = store.getState().present.movies;
+        const state = store.getState().undoableApp.present;
         const list = state.filter(m => m.id === movieId)
         list[0].rating.map(s => {
             console.log(s.userId)
@@ -200,7 +200,7 @@ const app = {
         let score = 0;
         let overallScore = 0;
         let divider = 0;
-        const state = store.getState().present.movies;
+        const state = store.getState().undoableApp.present;
         const list = state.filter(m => m.id === movieId)
         list[0].rating.map(r => {
             score += r.score;
@@ -216,7 +216,7 @@ const app = {
         store.dispatch({ type: 'ADD_WATCH', payload: { userId, movieId, watchTime, watched: null } })
     },
     getMovieWatchers: (movieId) => {
-        const state = store.getState().present.movies;
+        const state = store.getState().undoableApp.present;
         const targetMovie = state.find(movie => movie.id === movieId);
         if (targetMovie) {
             return `Watching now : ${targetMovie.watchedBy.map(user => user.userId)}`;
@@ -226,7 +226,7 @@ const app = {
         }
     },
     getUserWatchTime: (userId, movieId) => {
-        const state = store.getState().present.movies;
+        const state = store.getState().undoableApp.present;
         const targetMovie = state.find(movie => movie.id === movieId);
         let userWatchTime = targetMovie.watchedBy.filter(user => user.userId === userId)[0];
         let displayText = userWatchTime ? userWatchTime.watchTime : 'NOT there, cAuSe yOu eNtEreD wRoNg iNfo, SHAME ON YOU (-_-;)'
@@ -249,7 +249,7 @@ const app = {
         })
     },
     toggleUserLogin: (userName, userId) => {
-        const state = store.getState().present.users;
+        const state = store.getState().users;
         const idChecker = state.filter(user => user.id === userId);
         const nameChecker = state.filter(user => user.name === userName);
         if (idChecker.length < 1) return `Wrong Id Info, Re-Check! Easy to hack us!`;
@@ -258,7 +258,7 @@ const app = {
         return `user toggled succesfuly !✔️`
     },
     getUsers: () => {
-        return store.getState().present.users;
+        return store.getState().users;
     },
     togglePlay: (movieId, userId, clickDate = new Date().getTime()) => {
         const targetUser = store.getState().present.users.filter(user => user.id === userId)[0];
@@ -278,7 +278,7 @@ const app = {
         })
     },
     toggleAdminLogin: (adminName, adminId) => {
-        const state = store.getState().present.admins;
+        const state = store.getState().admins;
         const idChecker = state.filter(admin => admin.id === adminId);
         const nameChecker = state.filter(admin => admin.name === adminName);
         if (idChecker.length < 1) return `Wrong admin Id Info, Re-Check! Easy to hack us!`;
@@ -294,12 +294,25 @@ const app = {
         store.dispatch({ type: 'REDO' });
     }
 }
-
+//Time Travel Button:
+const undoBtn = document.querySelector('#undo');
+const redoBtn = document.querySelector('#redo');
+undoBtn.addEventListener('click', ()=>app.undo())
+redoBtn.addEventListener('click', () => app.redo())
 
 //Rendering:
 const render = () => {
     let content = '';
-    app.getMoviesList().forEach((movie) => {
+    store.getState().undoableApp.present.forEach((movie) => {
+       if (store.getState().undoableApp.past.length ===0) undoBtn.disabled = true;
+        else {
+            undoBtn.disabled = false;
+        }
+        if (store.getState().undoableApp.future.length === 0) redoBtn.disabled = true;
+        else {
+            redoBtn.disabled = false;
+        }
+
         let rating = app.getMovieOverallScore(movie.id);
         let ratingDisplay;
         if(rating === "NaN") {ratingDisplay = 'N/A';}
@@ -323,23 +336,20 @@ const render = () => {
 
             </div>
         </div>`;
-        const rootElem = document.querySelector('#root');
+   });
+
+            const rootElem = document.querySelector('#root');
         rootElem.innerHTML = content;
-    });
     return content;
 };
 store.subscribe(render);
 
-//Time Travel Button:
-const undoBtn = document.querySelector('#undo');
-const redoBtn = document.querySelector('#redo');
-undoBtn.addEventListener('click', ()=>app.undo())
-redoBtn.addEventListener('click', () => app.redo())
-// if (store.getState().past.length === 0) undoBtn.disabled = true;
-// else {
-//     undoBtn.disabled = false;
-// }
-// if (store.getState().future.length === 0) redo.disabled = true;
-// else {
-//     undoBtn.disabled = false;
-// }
+if (store.getState().undoableApp.past.length ===0) undoBtn.disabled = true;
+else {
+    undoBtn.disabled = false;
+}
+if (store.getState().undoableApp.future.length === 0) redoBtn.disabled = true;
+else {
+    redoBtn.disabled = false;
+}
+

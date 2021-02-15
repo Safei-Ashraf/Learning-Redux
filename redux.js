@@ -44,7 +44,7 @@ function undoable(reducer) {
     // Call the reducer with empty action to populate the initial state
     const initialState = {
         past: [],
-        present: reducer(undefined, {}),
+        present: reducer([], {}),
         future: [],
     };
 
@@ -62,8 +62,6 @@ function undoable(reducer) {
             case 'REDO':
                 const next = future[0];
                 const newFuture = future.slice(1);
-                console.log(past)
-
                 return {
                     past: [...past, present],
                     present: next,
@@ -74,9 +72,9 @@ function undoable(reducer) {
                 if (present === newPresent) {
                     return state;
                 }
-                else{
+                else {
                 return {
-                    past: [[past], present],
+                    past: [...past,present],
                     present: newPresent,
                     future: [],
                 };}
