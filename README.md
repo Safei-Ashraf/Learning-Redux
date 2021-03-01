@@ -1,3 +1,50 @@
+# Redux Movie APP (Vanilla JS)
+
+
+A simple movies app, applying all basic concepts of state management using Redux approach in Vanilla JS.
+
+- Add admin (authorized person to add/create/delete movies in the app)
+- Add movies (name, duration) id assigned randomly.
+- Add user (able to watch movies, play, pause, rate)
+- Get a movies overall rating by different users
+- Get list of all users who watched a certain movie
+- Get all users who rated a movie
+- Get a movie watch time, number of play/pause events
+- Get a user watch list - fav list.
+- Use undo -redo buttons to undo movie-related actions like (add-delete)
+- Render added movies into UI along with undo -redo buttons.
+
+
+
+##How To use:
+-clone or download the app using
+```sh
+git clone https://github.com/Safei-Ashraf/Learning-Redux.git
+or using SSH 
+git clone git@github.com:Safei-Ashraf/Learning-Redux.git
+
+Then use live server to view the app by running index.html
+```
+
+![image](https://user-images.githubusercontent.com/44810632/109462258-e0690380-7a6b-11eb-8f4f-e5c9565074f0.png)
+
+- Use the browser console to Add Admin => app.addAdmin(name)
+- Add a movie through this admin (or any admin you might add) => app.addMovie(movieName, duration, AdminId) you can obtain adminId from the state store.getState().admin[0].id
+- Add a user app.addUser(name)
+- Now you can rate a movie app.rateMovie, add to watch list, play, pause, ..etc as user. and it will appear on the rendered UI.
+- you can add or delete more movies as admin, it will also appear in the UI
+- you can use the UNDO - REDO buttons to undo or redo actions related to movies.
+
+### while the applies all concepts from Redux, they were all built using Vanilla JS to build solid understanding of state management concepts.
+
+## Live Demo: 
+ - Simple set of steps in photo of how to use the app 
+![image](https://user-images.githubusercontent.com/44810632/109463634-05f70c80-7a6e-11eb-92dd-68ff2bc5fd8d.png)
+
+
+ - [Live demo you can use without downloading the app click here](https://romantic-lalande-28c4ba.netlify.app/)
+
+
 #   Learning Notes: 
 
 - In this ReadME, I will be adding some of the notes I have been taking during learning, most of it came from the community notes on egghead course 
