@@ -17,6 +17,10 @@ A simple movies app, applying all basic concepts of state management using Redux
 
 
 ##How To use:
+
+-There is a live demo link below, you can use without downloading the app.
+
+
 -clone or download the app using
 ```sh
 git clone https://github.com/Safei-Ashraf/Learning-Redux.git
